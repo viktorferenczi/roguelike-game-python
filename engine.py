@@ -1,5 +1,8 @@
+import random
+
+
 def create_board(width, height):
-    '''
+    """
     Creates a new game board based on input parameters.
 
     Args:
@@ -8,24 +11,29 @@ def create_board(width, height):
 
     Returns:
     list: Game board
-    '''
-    # The engine.create_board function returns an empty, rectangular board as a list of lists of the given size, containing characters according to the field type (e.g. spaces all around and wall icons on its edges).
-    # The game has at least 3 boards/levels with different inhabitants.
-    # Gates are added on the edges (one gate character instead of one piece of wall).
+    """
     board = []
-    for i in range(width):
+
+    # Create empty board
+    for _ in range(height):
         row = []
-        for j in range(height):
-            if i == 0 or i == width - 1 or j == 0 or j == height - 1:
-                row.append('#')  # Wall character
-            else:
-                row.append(' ')  # Empty space
+        for _ in range(width):
+            row.append(" ")
         board.append(row)
-    # Adding gates (for simplicity, placing one gate on each side)
-    board[0][height // 2] = 'G'  # Top gate
-    board[width - 1][height // 2] = 'G'  # Bottom gate
-    board[width // 2][0] = 'G'  # Left gate
-    board[width // 2][height - 1] = 'G'  # Right gate
+
+    # Add walls around the edges
+    for col in range(width):
+        board[0][col] = "#"  # Top wall
+        board[height - 1][col] = "#"  # Bottom wall
+
+    for row in range(height):
+        board[row][0] = "#"  # Left wall
+        board[row][width - 1] = "#"  # Right wall
+
+    # Add gates
+    board[random.randint(1, height - 2)][0] = "G"  # Start gate
+    board[random.randint(1, height - 2)][width - 1] = "G"  # End gate
+
     return board
 
 
