@@ -38,7 +38,8 @@ def main():
         if key == 'q':
             is_running = False
         elif key in ['w', 'a', 's', 'd']:
-            engine.move_player(board, player, key)
+            new_position = engine.calculate_new_position(player, key)
+            engine.move_player(board, player, new_position)
         else:
             pass
 
