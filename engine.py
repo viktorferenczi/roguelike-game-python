@@ -1,4 +1,5 @@
 import random
+import entities
 import ui
 
 
@@ -39,7 +40,7 @@ def create_board(width, height):
 
     # Add items randomly
     item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, {"icon": ui.ITEM_ICON}, item_position)
+    put_item_on_board(board, entities.create_item(), item_position)
 
     return board
 
@@ -75,7 +76,44 @@ def put_item_on_board(board, item, position):
     Nothing
     """
     row, col = position
-    board[row][col]["item"] = item["icon"]
+    item['position'] = position
+    board[row][col]["item"] = item
+
+
+def remove_item_from_board(board, item):
+    """
+    Removes an item from the board.
+
+    Args:
+    list: The game board
+    dictionary: The item information containing the icon and coordinates
+
+    Returns:
+    Nothing
+    """
+    row, col = item["position"]
+    board[row][col]["item"] = None
+    item ["position"] = None
+
+
+def pick_up_item(board, player):
+    """
+    Allows the player to pick up an item from the board if present at the player's position.
+
+    Args:
+    list: The game board
+    dictionary: The player information containing the icon and coordinates
+
+    Returns:
+    Nothing
+    """
+    row, col = player["position"]
+    cell = board[row][col]
+    if cell["item"] is not None:
+        item = cell["item"]
+        remove_item_from_board(board, item)
+        item["position"] = 'inventory'
+        player["inventory"].append(item)
 
 
 def put_player_on_board(board, player):
@@ -90,7 +128,7 @@ def put_player_on_board(board, player):
     Nothing
     """
     row, col = player["position"]
-    board[row][col]["entity"] = player["icon"]
+    board[row][col]["entity"] = player
 
 
 def remove_player_from_board(board, player):
@@ -106,6 +144,7 @@ def remove_player_from_board(board, player):
     """
     row, col = player["position"]
     board[row][col]["entity"] = None
+    player["position"] = None
 
 
 def move_player(board, player, new_position):

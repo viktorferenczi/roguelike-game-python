@@ -34,6 +34,7 @@ def run_level(board, player):
             level_delta = engine.get_gate_transition_delta(board, player, new_position)
             if level_delta == 0:
                 engine.move_player(board, player, new_position)
+                engine.pick_up_item(board, player)
             else:
                 engine.remove_player_from_board(board, player)
                 return level_delta
@@ -56,12 +57,15 @@ def main():
 
         level += level_delta
 
-        if level < 0:
+        if level < 0: #TODO: need other implementation for going below level 0
             level = 0
+            player["position"] = engine.get_player_start_position(boards[level], 1)
         elif level >= len(boards):
             break
+        else:
+            player["position"] = engine.get_player_start_position(boards[level], level_delta)
 
-        player["position"] = engine.get_player_start_position(boards[level], level_delta)
+    print(player["inventory"])
 
 
 if __name__ == '__main__':

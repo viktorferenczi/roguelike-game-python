@@ -14,12 +14,13 @@ def create_player():
     player = {
         "icon": ui.PLAYER_ICON,
         "position": (PLAYER_START_ROW, PLAYER_START_COL),
+        "name": "Player",
         "inventory": []
     }
     return player
 
 
-def create_item(type):
+def create_item():
     """
     Creates an item dictionary for storing item related information - i.e. item icon, item position.
 
@@ -29,6 +30,6 @@ def create_item(type):
     item = {
         "icon": ui.ITEM_ICON,
         "position": (5, 5),
-        "name": "Health Potion"
+        "name": "Item"
     }
     return item

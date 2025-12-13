@@ -16,16 +16,16 @@ def display_board(board):
     list: The game board
 
     Returns:
-    Nothing
+    None
     """
     cell_display = []
 
     for row in board:
         for cell in row:
             if cell["entity"] is not None:
-                cell_display.append(cell["entity"])
+                cell_display.append(cell["entity"]['icon'])
             elif cell["item"] is not None:
-                cell_display.append(cell["item"])
+                cell_display.append(cell["item"]['icon'])
             else:
                 cell_display.append(cell["terrain"])
         cell_display.append('\n')
