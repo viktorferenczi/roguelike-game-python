@@ -204,12 +204,16 @@ def get_gate_transition_delta(board, player, new_position):
     Returns:
     int: 1 if moving to next level, -1 if moving to previous level, 0 otherwise
     """
-    p_row, p_col = player["position"]
-    new_p_row, new_p_col = new_position
-    if board[p_row][p_col]["terrain"] in [ui.START_GATE_ICON, ui.END_GATE_ICON] and is_out_of_bounds(board, new_p_row, new_p_col):
-        if board[p_row][p_col]["terrain"] == ui.END_GATE_ICON:
+    player_row, player_col = player["position"]
+    new_player_row, new_player_col = new_position
+    cell = board[player_row][player_col]
+    on_gate = cell["terrain"] in (ui.START_GATE_ICON, ui.END_GATE_ICON)
+    moving_out_of_bounds = is_out_of_bounds(board, new_player_row, new_player_col)
+
+    if on_gate and moving_out_of_bounds:
+        if board[player_row][player_col]["terrain"] == ui.END_GATE_ICON:
             return 1
-        elif board[p_row][p_col]["terrain"] == ui.START_GATE_ICON:
+        elif board[player_row][player_col]["terrain"] == ui.START_GATE_ICON:
             return -1
     return 0
 
