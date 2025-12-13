@@ -32,14 +32,34 @@ def create_board(width, height):
         board[row][width - 1]["terrain"] = ui.WALL_ICON  # Right wall
 
     # Add gates
-    board[random.randint(1, height - 2)][0]["terrain"] = ui.START_GATE_ICON  # Start gate
-    board[random.randint(1, height - 2)][width - 1]["terrain"] = ui.END_GATE_ICON  # End gate
+    start_position = (random.randint(1, height - 2), 0)
+    end_position = (random.randint(1, height - 2), width - 1)
+    add_gate(board, 'start', start_position)
+    add_gate(board, 'end', end_position)
 
     # Add items randomly
     item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
     put_item_on_board(board, {"icon": ui.ITEM_ICON}, item_position)
 
     return board
+
+
+def add_gate(board, gate_type, position):
+    """
+    Adds a gate to the board.
+
+    Args:
+    list: The game board
+    str: The type of gate to add ('start' or 'end')
+
+    Returns:
+    Nothing
+    """
+    row, col = position
+    if gate_type == 'start':
+        board[row][col]["terrain"] = ui.START_GATE_ICON
+    elif gate_type == 'end':
+        board[row][col]["terrain"] = ui.END_GATE_ICON
 
 
 def put_item_on_board(board, item, position):
