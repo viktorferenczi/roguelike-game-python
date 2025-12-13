@@ -1,5 +1,7 @@
 import random
 
+import ui
+
 
 def create_board(width, height):
     """
@@ -18,21 +20,21 @@ def create_board(width, height):
     for _ in range(height):
         row = []
         for _ in range(width):
-            row.append({"terrain": " ", "entity": None})
+            row.append({"terrain": ui.FLOOR_ICON, "entity": None})
         board.append(row)
 
     # Add walls around the edges
     for col in range(width):
-        board[0][col]["terrain"] = "#"  # Top wall
-        board[height - 1][col]["terrain"] = "#"  # Bottom wall
+        board[0][col]["terrain"] = ui.WALL_ICON  # Top wall
+        board[height - 1][col]["terrain"] = ui.WALL_ICON  # Bottom wall
 
     for row in range(height):
-        board[row][0]["terrain"] = "#"  # Left wall
-        board[row][width - 1]["terrain"] = "#"  # Right wall
+        board[row][0]["terrain"] = ui.WALL_ICON  # Left wall
+        board[row][width - 1]["terrain"] = ui.WALL_ICON  # Right wall
 
     # Add gates
-    board[random.randint(1, height - 2)][0]["terrain"] = "S"  # Start gate
-    board[random.randint(1, height - 2)][width - 1]["terrain"] = "E"  # End gate
+    board[random.randint(1, height - 2)][0]["terrain"] = ui.START_GATE_ICON  # Start gate
+    board[random.randint(1, height - 2)][width - 1]["terrain"] = ui.END_GATE_ICON  # End gate
 
     return board
 
@@ -103,7 +105,7 @@ def is_valid_move(board, row, col):
         return False
 
     # Check for wall collision
-    if board[row][col]["terrain"] == "#":
+    if board[row][col]["terrain"] == ui.WALL_ICON:
         return False
 
     return True
@@ -165,10 +167,10 @@ def get_gate_transition_delta(board, player, new_position):
     """
     p_row, p_col = player["position"]
     new_p_row, new_p_col = new_position
-    if board[p_row][p_col]["terrain"] in ["S", "E"] and is_out_of_bounds(board, new_p_row, new_p_col):
-        if board[p_row][p_col]["terrain"] == "E":
+    if board[p_row][p_col]["terrain"] in [ui.START_GATE_ICON, ui.END_GATE_ICON] and is_out_of_bounds(board, new_p_row, new_p_col):
+        if board[p_row][p_col]["terrain"] == ui.END_GATE_ICON:
             return 1
-        elif board[p_row][p_col]["terrain"] == "S":
+        elif board[p_row][p_col]["terrain"] == ui.START_GATE_ICON:
             return -1
     return 0
 
@@ -187,12 +189,12 @@ def get_player_start_position(board, level_delta):
     if level_delta == 1:  # Moving to next level
         for row_idx, row in enumerate(board):
             for col_idx, cell in enumerate(row):
-                if cell["terrain"] == "S":
+                if cell["terrain"] == ui.START_GATE_ICON:
                     return row_idx, col_idx
     elif level_delta == -1:  # Moving to previous level
         for row_idx, row in enumerate(board):
             for col_idx, cell in enumerate(row):
-                if cell["terrain"] == "E":
+                if cell["terrain"] == ui.END_GATE_ICON:
                     return row_idx, col_idx
     # Default start position (if no gate found)
     return 3, 3

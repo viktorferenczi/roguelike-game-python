@@ -1,5 +1,11 @@
 import os
 
+PLAYER_ICON = '@'
+WALL_ICON = '#'
+FLOOR_ICON = ' '
+START_GATE_ICON = 'S'
+END_GATE_ICON = 'E'
+
 
 def display_board(board):
     """
