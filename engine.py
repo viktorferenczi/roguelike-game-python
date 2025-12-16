@@ -20,7 +20,11 @@ def create_board(width, height):
     for _ in range(height):
         row = []
         for _ in range(width):
-            row.append({"terrain": ui.FLOOR_ICON, "entity": None, "item": None})
+            cell = {
+                "terrain": ui.FLOOR_ICON,
+                "entity": None,
+                "item": None}
+            row.append(cell)
         board.append(row)
 
     # Add walls around the edges
