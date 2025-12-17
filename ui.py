@@ -6,6 +6,10 @@ FLOOR_ICON = ' '
 START_GATE_ICON = 'S'
 END_GATE_ICON = 'E'
 ITEM_ICON = '!'
+FOOD_ICON = '%'
+POTION_ICON = '+'
+SWORD_ICON = '/'
+SHIELD_ICON = ']'
 
 
 def display_board(board):

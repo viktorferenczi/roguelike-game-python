@@ -42,9 +42,11 @@ def create_board(width, height):
     add_gate(board, 'start', start_position)
     add_gate(board, 'end', end_position)
 
-    # Add items randomly
+    # Add items randomly - TODO: need a proper placement algorithm
     item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
     put_item_on_board(board, entities.create_item(), item_position)
+    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
+    put_item_on_board(board, entities.create_item("food", ), item_position)
 
     return board
 
