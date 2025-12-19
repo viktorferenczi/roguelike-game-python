@@ -118,7 +118,7 @@ def pick_up_item(board, player):
     if cell["item"] is not None:
         item = cell["item"]
         remove_item_from_board(board, item)
-        if item.get("consumable", False) and item.get("auto_consume", False):
+        if item.get("consumable") and item.get("auto_consume"):
             consume_item(player, item)
         else:
             item["position"] = 'inventory'
@@ -253,10 +253,10 @@ def get_gate_transition_delta(board, player, new_position):
     int: 1 if moving to next level, -1 if moving to previous level, 0 otherwise
     """
     player_row, player_col = player["position"]
-    new_player_row, new_player_col = new_position
+    player_new_row, player_new_col = new_position
     cell = board[player_row][player_col]
     on_gate = cell["terrain"] in (ui.START_GATE_ICON, ui.END_GATE_ICON)
-    moving_out_of_bounds = is_out_of_bounds(board, new_player_row, new_player_col)
+    moving_out_of_bounds = is_out_of_bounds(board, player_new_row, player_new_col)
 
     if on_gate and moving_out_of_bounds:
         if board[player_row][player_col]["terrain"] == ui.END_GATE_ICON:
@@ -312,3 +312,62 @@ def consume_item(player, item):
         player["inventory"].remove(item)
     except ValueError:
         pass  # Item wasn't in inventory
+
+
+def equip_item(player, item):
+    """
+    Equips a weapon or armor to the player.
+
+    Args:
+    dictionary: The player
+    dictionary: The item
+
+    Returns:
+    Nothing
+    """
+    item_equip_slot = item.get("equip_slot")
+    unequip_item(player, item_equip_slot)
+    item["position"] = item_equip_slot
+    player[item_equip_slot] = item
+
+
+def unequip_item(player, slot):
+    """
+    Unequips an item from the specified slot and returns it to the inventory.
+
+    Args:
+    dictionary: The player
+    str: The slot to unequip ('weapon' or 'armor')
+
+    Returns:
+    Nothing
+    """
+    item = player.get(slot)
+    if item:
+        player[slot] = None
+        item["position"] = 'inventory'
+        player["inventory"].append(item)
+
+
+def handle_inventory_item(player, item):
+    """
+    Handles inventory item actions based on item type.
+
+    Args:
+        player: Player object
+        item: Item object
+
+    Returns:
+        bool: True if action was performed
+    """
+
+    if item.get("consumable"):
+        consume_item(player, item)
+        return True
+
+    elif item.get("equippable"):
+        equip_item(player, item)
+        player["inventory"].remove(item)
+        return True
+
+    return False

@@ -14,7 +14,6 @@ def run_level(board, player):
     Args:
     list: Game board
     dict: Player object
-    int: Current level
 
     Returns:
     str: 'quit' if player quits,
@@ -27,8 +26,13 @@ def run_level(board, player):
         ui.display_board(board, player)
 
         key = util.key_pressed()
+
         if key == 'q':
             return 'quit'
+
+        elif key == 'i':
+            handle_inventory(player)
+
         elif key in ['w', 'a', 's', 'd']:
             new_position = engine.calculate_new_position(player, key)
             level_delta = engine.get_gate_transition_delta(board, player, new_position)
@@ -40,6 +44,56 @@ def run_level(board, player):
                 return level_delta
 
         ui.clear_screen()
+
+
+def handle_inventory(player):
+    """
+    Handles inventory interactions with item selection.
+
+    Args:
+    dict: The player object
+
+    Returns:
+    None
+    """
+    while True:
+        inventory = player["inventory"]
+
+        # Group items by name and add numbering as keys
+        inventory_summary = {}
+        for item in inventory:
+            item_name = item["name"]
+            if item_name in inventory_summary:
+                inventory_summary[item_name]["quantity"] += 1
+            else:
+                inventory_summary[item_name] = {"item": item, "quantity": 1}
+
+        grouped_inventory = {}
+        for index, (item_name, item_info) in enumerate(inventory_summary.items(), start=1):
+            grouped_inventory[str(index)] = item_info
+
+
+        ui.clear_screen()
+        ui.display_inventory(player, grouped_inventory)
+
+        key = util.key_pressed()
+
+        if key in ['q', 'i']:
+            break
+
+        if key.isdigit():
+            item = grouped_inventory.get(key).get("item")
+            if not item:
+                print("There is no item with that number.")
+                input("\nPress Enter to continue...")
+                continue
+            elif engine.handle_inventory_item(player, item):
+                # input("\nPress Enter to continue...")
+                pass
+            else:
+                print('Invalid action for that item.')
+                input("\nPress Enter to continue...")
+                pass
 
 
 def main():
@@ -57,15 +111,13 @@ def main():
 
         level += level_delta
 
-        if level < 0: #TODO: need other implementation for going below level 0
+        if level < 0:  # TODO: need other implementation for going below level 0 (gate could have id for connected level, and connected gate/cell)
             level = 0
             player["position"] = engine.get_player_start_position(boards[level], 1)
         elif level >= len(boards):
             break
         else:
             player["position"] = engine.get_player_start_position(boards[level], level_delta)
-
-    print(player["inventory"])
 
 
 if __name__ == '__main__':

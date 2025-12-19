@@ -6,35 +6,75 @@ ITEM_TYPES = {
     "item": {
         "icon": ui.ITEM_ICON,
         "name": "Item",
+        "type": "item"
     },
     "food": {
         "icon": ui.FOOD_ICON,
         "name": "Food",
+        "type": "food",
         "heal": 10,
         "auto_consume": True,
         "consumable": True,
     },
-    "potion": {
+    "hp_potion": {
         "icon": ui.POTION_ICON,
-        "name": "Potion",
+        "name": "Healing Potion",
+        "type": "potion",
         "heal": 30,
-        "auto_consume": False,
         "consumable": True,
+    },
+    "strength_potion": {
+        "icon": ui.POTION_ICON,
+        "name": "Strength Potion",
+        "type": "potion",
+        "damage": 5,
+        "consumable": True,
+    },
+    "knife": {
+        "icon": ui.KNIFE_ICON,
+        "name": "Knife",
+        "type": "weapon",
+        "damage": 7,
+        "equippable": True,
+        "equip_slot": "weapon",
     },
     "sword": {
         "icon": ui.SWORD_ICON,
         "name": "Sword",
+        "type": "weapon",
         "damage": 15,
+        "equippable": True,
+        "equip_slot": "weapon",
     },
     "shield": {
         "icon": ui.SHIELD_ICON,
         "name": "Shield",
-        "defense": 10,
+        "type": "shield",
+        "damage": 3,
+        "defense": 5,
+        "equippable": True,
+        "equip_slot": "weapon",
+    },
+    "armor": {
+        "icon": ui.ARMOR_ICON,
+        "name": "Armor",
+        "type": "armor",
+        "defense": 5,
+        "equippable": True,
+        "equip_slot": "armor",
+    },
+    "shuriken": {
+        "icon": ui.SHURIKEN_ICON,
+        "name": "Shuriken",
+        "type": "weapon",
+        "damage": 5,
+        "throwable": True,
     },
     "key": {
         "icon": ui.KEY_ICON,
         "name": "Key",
-        "opens_doors": True
+        "type": "key",
+        "opens_doors": True,
     }
 }
 
@@ -50,13 +90,16 @@ def create_player():
         "icon": ui.PLAYER_ICON,
         "position": (PLAYER_START_ROW, PLAYER_START_COL),
         "name": "Player",
+        "race": "Human",
         "inventory": [],
         "hp": 10,
         "max_hp": 20,
         "damage": 5,
         "defense": 1,
         "experience": 0,
-        "level": 1
+        "level": 1,
+        "weapon": None,
+        "armor": None
     }
     return player
 
