@@ -314,6 +314,9 @@ def consume_item(player, item):
     if "heal" in item:
         player["hp"] = min(player["hp"] + item["heal"], player["max_hp"])
 
+    # Damage increase
+    if "damage" in item:
+        player["damage"] += item["damage"]
 
     # Remove item from inventory
     try:
