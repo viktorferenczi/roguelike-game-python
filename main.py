@@ -72,7 +72,6 @@ def handle_inventory(player):
         for index, (item_name, item_info) in enumerate(inventory_summary.items(), start=1):
             grouped_inventory[str(index)] = item_info
 
-
         ui.clear_screen()
         ui.display_inventory(player, grouped_inventory)
 
@@ -96,8 +95,38 @@ def handle_inventory(player):
                 pass
 
 
+def create_player():
+    """Character creation menu."""
+    ui.clear_screen()
+    print("=== Character Creation ===\n")
+
+    name = input("Character name: ")
+
+    races = {str(i): race for i, race in enumerate(entities.CHARACTERS_RACE_BONUS.keys(), start=1)}
+
+    print("\nChoose your race:")
+    for key, race in races.items():
+        print(f"{key}. {race.capitalize()}")
+    race_choice = input(f"\nChoice (1-{len(races)}): ")
+
+    player_race = races.get(race_choice, "human")
+
+    classes = {str(i): cls for i, cls in enumerate(entities.CHARACTERS_CLASS_BONUS.keys(), start=1)}
+
+    print("\nChoose your class:")
+    for key, cls in classes.items():
+        print(f"{key}. {cls.capitalize()}")
+    class_choice = input(f"\nChoice (1-{len(classes)}): ")
+
+    player_class = classes.get(class_choice, "warrior")
+
+    player = entities.create_player(name, player_race, player_class)
+
+    return player
+
+
 def main():
-    player = entities.create_player()
+    player = create_player()
     board = engine.create_board(BOARD_WIDTH, BOARD_HEIGHT)
     board2 = engine.create_board(40, 20)
     boards = [board, board2]

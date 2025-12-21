@@ -77,30 +77,68 @@ ITEM_TYPES = {
         "opens_doors": True,
     }
 }
+CHARACTERS_RACE_BONUS = {
+    "human": {
+        "max_hp": 20,
+        "damage": 7,
+        "defense": 3
+    },
+    "elf": {
+        "max_hp": 18,
+        "damage": 9,
+        "defense": 3
+    },
+    "dwarf": {
+        "max_hp": 22,
+        "damage": 4,
+        "defense": 4
+    }
+}
+CHARACTERS_CLASS_BONUS = {
+    "warrior": {
+        "max_hp": 10,
+        "damage": 5,
+        "defense": 3
+    },
+    "shaman": {
+        "max_hp": 5,
+        "damage": 8,
+        "defense": 1
+    },
+    "rogue": {
+        "max_hp": 7,
+        "damage": 6,
+        "defense": 2
+    }
+}
 
 
-def create_player():
+def create_player(name="Player", player_race="human", player_class="warrior"):
     """
     Creates a 'player' dictionary for storing all player related information - i.e. player icon, player position.
 
     Returns:
     dictionary
     """
+    player_race_bonus = CHARACTERS_RACE_BONUS.get(player_race)
+    player_class_bonus = CHARACTERS_CLASS_BONUS.get(player_class)
+
     player = {
         "icon": ui.PLAYER_ICON,
         "position": (PLAYER_START_ROW, PLAYER_START_COL),
-        "name": "Player",
-        "race": "Human",
+        "name": name,
+        "race": player_race,
         "inventory": [],
-        "hp": 10,
-        "max_hp": 20,
-        "damage": 5,
-        "defense": 1,
+        "max_hp": 20 + player_race_bonus["max_hp"] + player_class_bonus["max_hp"],
+        "damage": 5 + player_race_bonus["damage"] + player_class_bonus["damage"],
+        "defense": 1 + player_race_bonus["defense"] + player_class_bonus["defense"],
         "experience": 0,
         "level": 1,
         "weapon": None,
         "armor": None
     }
+    player["hp"] = player["max_hp"]
+
     return player
 
 
