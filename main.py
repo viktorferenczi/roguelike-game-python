@@ -22,6 +22,13 @@ def run_level(board, player):
     ui.clear_screen()
 
     while True:
+        if not engine.is_alive(player):
+            player["icon"] = ui.DEAD_PLAYER_ICON
+            engine.put_player_on_board(board, player)
+            ui.display_board(board, player)
+            print("\nYou have died! Game Over.")
+            return 'quit'
+
         engine.put_player_on_board(board, player)
         ui.display_board(board, player)
 
@@ -93,6 +100,9 @@ def handle_inventory(player):
                 print('Invalid action for that item.')
                 input("\nPress Enter to continue...")
                 pass
+
+        if not engine.is_alive(player):
+            break
 
 
 def create_player():

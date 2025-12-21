@@ -55,6 +55,8 @@ def create_board(width, height):
     put_item_on_board(board, entities.create_item("armor"), item_position)
     item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
     put_item_on_board(board, entities.create_item("shield"), item_position)
+    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
+    put_item_on_board(board, entities.create_item("poison"), item_position)
 
     return board
 
@@ -310,7 +312,7 @@ def consume_item(player, item):
     Returns:
     Nothing
     """
-    # Health restoration
+    # Health restoration/poison
     if "heal" in item:
         player["hp"] = min(player["hp"] + item["heal"], player["max_hp"])
 
@@ -382,3 +384,16 @@ def handle_inventory_item(player, item):
         return True
 
     return False
+
+
+def is_alive(player):
+    """
+    Checks if the player is alive.
+
+    Args:
+    dictionary: The player
+
+    Returns:
+    bool: True if alive, False if dead
+    """
+    return player["hp"] > 0

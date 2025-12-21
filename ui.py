@@ -8,12 +8,15 @@ END_GATE_ICON = 'Ώ'
 ITEM_ICON = 'i'
 FOOD_ICON = '≡'
 POTION_ICON = 'δ'
+POISON_ICON = '☠'
 SWORD_ICON = '!'
 SHIELD_ICON = 'Θ'
 ARMOR_ICON = '◊'
 KEY_ICON = '๛'
 SHURIKEN_ICON = '✦'
 KNIFE_ICON = '/'
+DEAD_PLAYER_ICON = '✝'
+
 
 def display_board(board, player):
     """

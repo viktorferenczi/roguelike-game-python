@@ -23,6 +23,13 @@ ITEM_TYPES = {
         "heal": 30,
         "consumable": True,
     },
+    "poison": {
+        "icon": ui.POISON_ICON,
+        "name": "Poison",
+        "type": "potion",
+        "heal": -50,
+        "consumable": True,
+    },
     "strength_potion": {
         "icon": ui.POTION_ICON,
         "name": "Strength Potion",
