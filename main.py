@@ -21,7 +21,7 @@ def run_level(board, player):
     """
     ui.clear_screen()
     # enemies = []
-    # enemies = enemies.append(entities.create_enemy())
+    # enemies.append(entities.create_enemy())
     enemy = entities.create_enemy()
 
     while True:
@@ -50,7 +50,7 @@ def run_level(board, player):
             if level_delta == 0:
                 engine.move_player(board, player, new_position)
                 engine.pick_up_item(board, player)
-                engine.move_enemies(board, [enemy])
+                engine.move_enemy(board, enemy, player)
             else:
                 engine.remove_player_from_board(board, player)
                 return level_delta

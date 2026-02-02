@@ -399,14 +399,34 @@ def is_alive(player):
     return player["hp"] > 0
 
 
-def move_enemies(board, enemies):
+def is_near_player(player, enemy, distance=1):
     """
-    Move all enemies on the board autonomously.
-    Enemies move randomly in one of the four directions, respecting walls.
+    Checks if the enemy is within a certain distance from the player.
 
     Args:
+        player: The player object (dictionary)
+        enemy: The enemy object (dictionary)
+        distance: The distance threshold
+
+    Returns:
+        bool: True if enemy is within distance from player, False otherwise
+    """
+
+    player_row, player_col = player['position']
+    enemy_row, enemy_col = enemy['position']
+    return abs(player_row - enemy_row) <= distance and abs(player_col - enemy_col) <= distance
+
+
+
+def move_enemy(board, enemy, player):
+    """
+    Move an enemy on the board autonomously.
+    Enemy move randomly in one of the four directions, respecting walls.
+
+    Args:
+        player: The player object (dictionary)
         board: The game board (2D list)
-        enemies: List of enemy dictionaries with 'x', 'y', and 'icon' keys
+        enemy: The enemy object (dictionary)
     """
     directions = [
         (-1, 0),  # up
@@ -415,11 +435,13 @@ def move_enemies(board, enemies):
         (0, 1)  # right
     ]
 
-    for enemy in enemies:
-        # Choose random direction
-        dir_row, dir_col = random.choice(directions)
-        current_row, current_col=enemy['position']
-        new_row, new_col = current_row + dir_row, current_col + dir_col
-        new_position = new_row, new_col
+    if is_near_player(player, enemy):
+        return  # Do not move if near player
 
-        move_player(board, enemy, new_position)
+    # Choose random direction
+    dir_row, dir_col = random.choice(directions)
+    current_row, current_col=enemy['position']
+    new_row, new_col = current_row + dir_row, current_col + dir_col
+    new_position = new_row, new_col
+
+    move_player(board, enemy, new_position)
