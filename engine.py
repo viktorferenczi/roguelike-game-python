@@ -2,6 +2,7 @@ import random
 import entities
 import ui
 
+#TODO: bug: enemy show on board whenever player move to next level and not move
 
 def create_board(width, height):
     """
@@ -185,6 +186,23 @@ def move_player(board, player, new_position):
         player["position"] = (new_row, new_col)
 
 
+def is_occupied(board, row, col):
+    """
+    Checks if the specified position is occupied by an entity.
+
+    Args:
+    list: The game board
+    int: The target row
+    int: The target column
+
+    Returns:
+    bool: True if occupied, False otherwise
+    """
+    if board[row][col]["entity"] is not None:
+        return True
+    return False
+
+
 def is_valid_move(board, row, col):
     """
     Checks if the move to the specified position is valid (within bounds and not a wall).
@@ -199,6 +217,9 @@ def is_valid_move(board, row, col):
     """
     # Check bounds
     if is_out_of_bounds(board, row, col):
+        return False
+
+    if is_occupied(board, row, col):
         return False
 
     # Check for wall collision
