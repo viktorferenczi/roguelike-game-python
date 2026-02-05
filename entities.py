@@ -134,6 +134,7 @@ def create_player(name="Player", player_race="human", player_class="warrior"):
         "icon": ui.PLAYER_ICON,
         "position": (PLAYER_START_ROW, PLAYER_START_COL),
         "name": name,
+        "type": "player",
         "race": player_race,
         "inventory": [],
         "max_hp": 20 + player_race_bonus["max_hp"] + player_class_bonus["max_hp"],

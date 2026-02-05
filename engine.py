@@ -60,6 +60,9 @@ def create_board(width, height):
     item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
     put_item_on_board(board, entities.create_item("poison"), item_position)
 
+    # Add enemy randomly - TODO: need a proper placement algorithm
+    put_player_on_board(board, entities.create_enemy())
+
     return board
 
 
@@ -467,3 +470,20 @@ def move_enemy(board, enemy, player):
     new_position = new_row, new_col
 
     move_player(board, enemy, new_position)
+
+
+def get_enemies(board):
+    """
+    Retrieves all enemy entities from the board.
+
+    Args:
+        board: The game board (2D list)
+    Returns:
+        list: A list of enemy entities (dictionaries)
+    """
+    enemies = []
+    for row in board:
+        for cell in row:
+            if cell["entity"] and not cell["entity"]["type"] == "player":
+                enemies.append(cell["entity"])
+    return enemies

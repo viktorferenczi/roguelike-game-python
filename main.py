@@ -20,9 +20,8 @@ def run_level(board, player):
     int: level delta if player goes through a gate
     """
     ui.clear_screen()
-    # enemies = []
-    # enemies.append(entities.create_enemy())
-    enemy = entities.create_enemy()
+    enemies = engine.get_enemies(board)
+    enemy = enemies[0] # TODO: remove magic number
 
     while True:
         if not engine.is_alive(player):
