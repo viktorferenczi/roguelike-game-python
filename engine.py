@@ -2,7 +2,6 @@ import random
 import entities
 import ui
 
-# TODO: bug: enemy show on board whenever player move to next level and not move
 # TODO: need a proper character placement algorithm
 
 def create_board(width, height):
