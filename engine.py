@@ -170,6 +170,39 @@ def remove_player_from_board(board, player):
     player["position"] = None
 
 
+def is_next_cell_enemy(board, new_row, new_col):
+    """
+    Checks if the next cell contains an enemy.
+
+    Args:
+    list: The game board
+    int: The target row
+    int: The target column
+
+    Returns:
+    bool: True if the next cell contains an enemy, False otherwise
+    """
+    cell = board[new_row][new_col]
+    if cell["entity"] and cell["entity"]["type"] == "hostile":
+        return True
+    return False
+
+
+def attack(attacker, defender):
+    """
+    Handles the player attacking an enemy.
+
+    Args:
+    dictionary: The attacker information containing damage and coordinates
+    dictionary: The defender information containing hp, defense and coordinates
+
+    Returns:
+    Nothing
+    """
+    damage_dealt = max(attacker["damage"] - defender.get("defense", 0), 0)
+    defender["hp"] -= damage_dealt
+
+
 def move_player(board, player, new_position):
     """
     Moves the player if the new position is valid.
@@ -184,7 +217,10 @@ def move_player(board, player, new_position):
     """
     new_row, new_col = new_position
 
-    if is_valid_move(board, new_row, new_col):
+    if is_next_cell_enemy(board, new_row, new_col):
+        enemy = board[new_row][new_col]["entity"]
+        attack(player, enemy)
+    elif is_valid_move(board, new_row, new_col):
         remove_player_from_board(board, player)
         player["position"] = (new_row, new_col)
 
@@ -459,16 +495,24 @@ def move_enemy(board, enemy, player):
         (0, 1)  # right
     ]
 
+    if not is_alive(enemy):
+        # print('not alive')
+        # input()
+        remove_player_from_board(board, enemy)
+        return
+
     if is_near_player(player, enemy):
-        return  # Do not move if near player
+        attack(enemy, player)
+    else:
+        # Choose random direction
+        dir_row, dir_col = random.choice(directions)
+        current_row, current_col=enemy['position']
+        new_row, new_col = current_row + dir_row, current_col + dir_col
 
-    # Choose random direction
-    dir_row, dir_col = random.choice(directions)
-    current_row, current_col=enemy['position']
-    new_row, new_col = current_row + dir_row, current_col + dir_col
-    new_position = new_row, new_col
-
-    move_player(board, enemy, new_position)
+        if is_valid_move(board, new_row, new_col):
+            remove_player_from_board(board, enemy)
+            enemy["position"] = (new_row, new_col)
+            put_player_on_board(board, enemy)
 
 
 def get_enemies(board):

@@ -20,10 +20,12 @@ def run_level(board, player):
     int: level delta if player goes through a gate
     """
     ui.clear_screen()
-    enemies = engine.get_enemies(board)
-    enemy = enemies[0] # TODO: remove magic number
 
     while True:
+        enemies = engine.get_enemies(board)
+        if enemies:
+            enemy = enemies[0]  # TODO: remove magic number
+
         if not engine.is_alive(player):
             player["icon"] = ui.DEAD_PLAYER_ICON
             engine.put_player_on_board(board, player)
@@ -32,7 +34,9 @@ def run_level(board, player):
             return 'quit'
 
         engine.put_player_on_board(board, player)
-        engine.put_player_on_board(board, enemy)
+        # print(enemy)
+        # input()
+        # engine.put_player_on_board(board, enemy)
         ui.display_board(board, player)
 
         key = util.key_pressed()
@@ -49,7 +53,8 @@ def run_level(board, player):
             if level_delta == 0:
                 engine.move_player(board, player, new_position)
                 engine.pick_up_item(board, player)
-                engine.move_enemy(board, enemy, player)
+                if enemies:
+                    engine.move_enemy(board, enemy, player)
             else:
                 engine.remove_player_from_board(board, player)
                 return level_delta
