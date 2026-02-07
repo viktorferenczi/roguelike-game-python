@@ -1,6 +1,7 @@
 import random
 import entities
 import ui
+import util
 
 # TODO: need a proper character placement algorithm
 
@@ -43,23 +44,11 @@ def create_board(width, height):
     add_gate(board, 'start', start_position)
     add_gate(board, 'end', end_position)
 
-    # Add items randomly - TODO: need a proper placement algorithm
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item(), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("food", ), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("hp_potion"), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("sword"), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("armor"), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("shield"), item_position)
-    item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
-    put_item_on_board(board, entities.create_item("poison"), item_position)
+    items = ["item", "food", "hp_potion", "sword", "armor", "shield", "poison"]
+    for item in items:
+         item_position = (random.randint(1, height - 2), random.randint(1, width - 2))
+         put_item_on_board(board, entities.create_item(item), item_position)
 
-    # Add enemy randomly - TODO: need a proper placement algorithm
     put_player_on_board(board, entities.create_enemy())
 
     return board
@@ -129,14 +118,14 @@ def pick_up_item(board, player):
     """
     row, col = player["position"]
     cell = board[row][col]
-    if cell["item"] is not None:
-        item = cell["item"]
-        remove_item_from_board(board, item)
-        if item.get("consumable") and item.get("auto_consume"):
-            consume_item(player, item)
-        else:
-            item["position"] = 'inventory'
-            player["inventory"].append(item)
+   
+    item = cell["item"]
+    remove_item_from_board(board, item)
+    if item.get("consumable") and item.get("auto_consume"):
+        consume_item(player, item)
+    else:
+        item["position"] = 'inventory'
+        player["inventory"].append(item)
 
 
 def put_player_on_board(board, player):
@@ -187,6 +176,22 @@ def is_next_cell_enemy(board, new_row, new_col):
         return True
     return False
 
+def is_next_cell_item(board, new_row, new_col):
+    """
+    Checks if the next cell contains an item.
+
+    Args:
+    list: The game board
+    int: The target row
+    int: The target column
+
+    Returns:
+    bool: True if the next cell contains an item, False otherwise
+    """
+    cell = board[new_row][new_col]
+    if cell["item"] is not None:
+        return True
+    return False
 
 def attack(attacker, defender):
     """
@@ -217,10 +222,7 @@ def move_player(board, player, new_position):
     """
     new_row, new_col = new_position
 
-    if is_next_cell_enemy(board, new_row, new_col):
-        enemy = board[new_row][new_col]["entity"]
-        attack(player, enemy)
-    elif is_valid_move(board, new_row, new_col):
+    if is_valid_move(board, new_row, new_col):
         remove_player_from_board(board, player)
         player["position"] = (new_row, new_col)
 
@@ -530,3 +532,173 @@ def get_enemies(board):
             if cell["entity"] and not cell["entity"]["type"] == "player":
                 enemies.append(cell["entity"])
     return enemies
+
+def request_race_choice(races):
+    """
+    Prompts the player to choose a race and validates the input.
+    Args:
+    races: A list of available races
+    Returns:
+    str: The chosen race
+    """
+    while True:
+        race_choice = ui.request_input(f"\nChoice (1-{len(races)}): ")
+        if race_choice in races:
+            return race_choice
+        ui.display_message("Invalid choice. Please try again.") 
+
+def request_class_choice(classes):
+    """
+    Prompts the player to choose a class and validates the input.
+    Args:
+    classes: A list of available classes
+    Returns:
+    str: The chosen class
+    """
+    while True:
+        class_choice = ui.request_input(f"\nChoice (1-{len(classes)}): ")
+        if class_choice in classes:
+            return class_choice
+        ui.display_message("Invalid choice. Please try again.")
+
+
+def handle_inventory(player):
+    """
+    Handles inventory interactions with item selection.
+
+    Args:
+    dict: The player object
+
+    Returns:
+    None
+    """
+    while True:
+        inventory = player["inventory"]
+
+        # Group items by name and add numbering as keys
+        inventory_summary = {}
+        for item in inventory:
+            item_name = item["name"]
+            if item_name in inventory_summary:
+                inventory_summary[item_name]["quantity"] += 1
+            else:
+                inventory_summary[item_name] = {"item": item, "quantity": 1}
+
+        grouped_inventory = {}
+        for index, (item_name, item_info) in enumerate(inventory_summary.items(), start=1):
+            grouped_inventory[str(index)] = item_info
+
+        ui.clear_screen()
+        ui.display_inventory(player, grouped_inventory)
+
+        key = util.key_pressed()
+
+        if key in ['q', 'i']:
+            break
+
+        if key.isdigit():
+            item = grouped_inventory.get(key).get("item")
+            if not item:
+                ui.display_message("There is no item with that number.")
+                ui.display_press_enter()
+                continue
+            elif handle_inventory_item(player, item):
+                pass
+            else:
+                ui.display_message('Invalid action for that item.')
+                ui.display_press_enter()
+                pass
+
+        if not is_alive(player):
+            break
+
+def create_player():
+    """Character creation menu."""
+    ui.clear_screen()
+    ui.display_message("=== Character Creation ===\n")
+
+    name = ui.request_input("Character name: ")
+
+    races = {str(i): race for i, race in enumerate(entities.CHARACTERS_RACE_BONUS.keys(), start=1)}
+    ui.display_race_choices(races)
+    race_choice = request_race_choice(races)
+
+    player_race = races.get(race_choice, "human")
+
+    classes = {str(i): cls for i, cls in enumerate(entities.CHARACTERS_CLASS_BONUS.keys(), start=1)}
+
+    ui.display_class_choices(classes)
+    class_choice = request_class_choice(classes)
+
+    player_class = classes.get(class_choice, "warrior")
+
+    player = entities.create_player(name, player_race, player_class)
+
+    return player
+
+
+
+def run_level(board, player):
+    """
+    Runs a single level of the game.
+
+    Args:
+    list: Game board
+    dict: Player object
+
+    Returns:
+    str: 'quit' if player quits,
+    int: level delta if player goes through a gate
+    """
+    ui.clear_screen()
+
+    while True:
+        enemies = get_enemies(board)
+        has_enemies = len(enemies) > 0
+
+        if has_enemies:
+            enemy = enemies[0]  # TODO: remove magic number
+
+        if not is_alive(player):
+            player["icon"] = ui.DEAD_PLAYER_ICON
+            put_player_on_board(board, player)
+            ui.display_board(board, player)
+            ui.display_message("\nYou have died! Game Over.")
+            raise SystemExit
+        
+
+        put_player_on_board(board, player)
+        ui.display_board(board, player)
+
+        key = util.key_pressed()
+
+        if key == 'q':
+            raise SystemExit
+
+        elif key == 'i':
+            handle_inventory(player)
+
+        elif key in ['w', 'a', 's', 'd']:
+            new_position = calculate_new_position(player, key)
+            level_delta = get_gate_transition_delta(board, player, new_position)
+            if level_delta == 0:
+
+                new_row, new_col = new_position
+
+                if is_next_cell_enemy(board, new_row, new_col):
+                    enemy = board[new_row][new_col]["entity"]
+                    attack(player, enemy)
+                else:
+                    move_player(board, player, new_position)
+
+                if is_next_cell_item(board, new_row, new_col):
+                    pick_up_item(board, player)
+
+                if has_enemies:
+                    move_enemy(board, enemy, player)
+            else:
+                remove_player_from_board(board, player)
+                return level_delta
+
+        ui.clear_screen()
+

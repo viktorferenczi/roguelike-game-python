@@ -88,6 +88,38 @@ def display_inventory(player, grouped_inventory):
 
     print("=" * 40)
 
+def display_press_enter():
+    """
+    Displays a message prompting the user to press Enter to continue.
+
+    Returns:
+    None
+    """
+    input("\nPress Enter to continue...")
+
+def display_message(message):
+    """
+    Displays a message to the user.
+
+    Args:
+    str: The message to display
+
+    Returns:
+    None
+    """
+    print(message)
+
+def request_input(prompt):
+    """
+    Requests input from the user with a given prompt.
+
+    Args:
+    str: The prompt to display
+
+    Returns:
+    str: The user's input
+    """
+    return input(prompt)
 
 def clear_screen():
     """
@@ -97,3 +129,29 @@ def clear_screen():
         os.system('cls')
     else:
         os.system('clear')
+
+def display_race_choices(races):
+    """
+    Displays the available race choices to the user.    
+    Args:
+    dict: A dictionary where each key is a string number (for selection)
+    and the value is the name of the race   
+    Returns:
+    None
+    """
+    display_message("\nChoose your race:")
+    for key, race in races.items():
+        display_message(f"{key}. {race.capitalize()}")
+
+def display_class_choices(classes):
+    """
+    Displays the available class choices to the user.    
+    Args:
+    dict: A dictionary where each key is a string number (for selection)
+    and the value is the name of the class   
+    Returns:
+    None
+    """
+    display_message("\nChoose your class:")
+    for key, cls in classes.items():
+        display_message(f"{key}. {cls.capitalize()}")
